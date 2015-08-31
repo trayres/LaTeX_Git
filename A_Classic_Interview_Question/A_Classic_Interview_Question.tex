@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tikz}
+
+\begin{document}
+
+\title{Many Variable Fault Isolation: The Boolean Exposition of a Classic Interview Problem}
+\author{Travis Ayres \\  \href{mailto:trayres@gmail.com}{trayres@gmail.com}}
+
+\maketitle
+
+\begin{abstract}
+	This paper arose as a result of a question during a technical interview, and is a classic: "You are given a faulty system composed of three parts; you can replace any item in the system with a known working part. Which component is faulty?" However, a particularly vexing take on this classic question is to present the candidate with logically incosistent test results in order to see how the candidate thinks; wishing to avoid this version of the question, I encoded the system as a Boolean equation and solved for the faulty component. This paper discusses the basic question as a demonstration,  generalizes the concept to any number of components and multiple faults, and includes a discussion of the results. 
+\end{abstract}
+
+The Problem Statement
+A system pomposed of N components C1, C2, C3,...,CN-1,CN has a fault and is inoperable. Each component can be replaced with a known working substitute; when all faulty components are replaced, the system operates correctly. Find the faulty component(s).
+
+Encoding the Problem
+The system is comprised of components that are either original or repalcements and the result is that the system operates or not; we use a Boolean functional mapping of input state and output state as follows:
+Represent the system under consideration as a state vector (or binary number) of the format ABC with 0 (false) inidcating an original component and 1 (True) representing a swapped component. For the output, let us choose 0 to encode a faulty (or inoperable) system, and 1 to encode a correctly functioning (operable) system. 
+
+An Example: The Single-Fault, 3-Component System
+To motivate the discussion, consider the single-fault, 3-component system. By construction, we know the state variable for the original system with no swapped components is 000, and we are given that the output is 0. Let's consider the case where the third component, C, is faulty. The truth table with the encoding above and the givens is:
+
+
+\begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] at (0,0) {\includegraphics[width=\textwidth]{
+\[ \begin{array}{ccc|c}
+a&b&c & f \\           \hline
+1&1&1&\mathbf{0}\\ \hline
+1&1&0&\mathbf{1}\\ \hline
+1&0&1&\mathbf{0}\\ \hline
+1&0&0&\mathbf{0}\\ \hline
+0&1&1&\mathbf{0}\\ \hline
+0&1&0&\mathbf{0}\\ \hline
+0&0&1&\mathbf{0}\\ \hline
+0&0&0&\mathbf{0}
+\end{array} \]}
+};
+    \draw[red,ultra thick,rounded corners] (7.5,5.3) rectangle (9.4,6.2);
+\end{tikzpicture}
+
+
+\[ \begin{array}{ccc|c}
+a&b&c & f \\           \hline
+1&1&1&\mathbf{0}\\ \hline
+1&1&0&\mathbf{1}\\ \hline
+1&0&1&\mathbf{0}\\ \hline
+1&0&0&\mathbf{0}\\ \hline
+0&1&1&\mathbf{0}\\ \hline
+0&1&0&\mathbf{0}\\ \hline
+0&0&1&\mathbf{0}\\ \hline
+0&0&0&\mathbf{0}
+\end{array} \]
+
+Generalization to Arbirary Number of Components and Faults
+
+The Intuitive Interpretation
+
+Conclusion
+
+
+\end{document}
