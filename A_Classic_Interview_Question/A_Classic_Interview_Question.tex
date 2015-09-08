@@ -2,6 +2,7 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{tikz}
+\usetikzlibrary{tikzmark}
 
 \begin{document}
 
@@ -11,55 +12,68 @@
 \maketitle
 
 \begin{abstract}
-	This paper arose as a result of a question during a technical interview, and is a classic: "You are given a faulty system composed of three parts; you can replace any item in the system with a known working part. Which component is faulty?" However, a particularly vexing take on this classic question is to present the candidate with logically incosistent test results in order to see how the candidate thinks; wishing to avoid this version of the question, I encoded the system as a Boolean equation and solved for the faulty component. This paper discusses the basic question as a demonstration,  generalizes the concept to any number of components and multiple faults, and includes a discussion of the results. 
+	This paper arose as a result of a question during a technical interview, and is a classic: ``You are given a faulty system composed of three parts; you can replace any item in the system with a known working part. Which component is faulty?'' However, a particularly vexing take on this classic question is to present the candidate with logically inconsistent test results in order to see how the candidate thinks; wishing to avoid this version of the question, we encode the system as a Boolean equation and solved for the faulty component. This paper discusses the basic question as a demonstration,  generalizes the concept to any number of components and multiple faults, and includes a discussion of the results. 
 \end{abstract}
 
-The Problem Statement
-A system pomposed of N components C1, C2, C3,...,CN-1,CN has a fault and is inoperable. Each component can be replaced with a known working substitute; when all faulty components are replaced, the system operates correctly. Find the faulty component(s).
+\section*{The Problem Statement}
+	A system composed of N components $C_1, C_2, C_3,\ldots,C_{N-1},C_N$ has a fault and is inoperable. Each component can be replaced with a known working substitute; when all faulty components are replaced, the system operates correctly. Find the faulty component(s).
 
-Encoding the Problem
-The system is comprised of components that are either original or repalcements and the result is that the system operates or not; we use a Boolean functional mapping of input state and output state as follows:
-Represent the system under consideration as a state vector (or binary number) of the format ABC with 0 (false) inidcating an original component and 1 (True) representing a swapped component. For the output, let us choose 0 to encode a faulty (or inoperable) system, and 1 to encode a correctly functioning (operable) system. 
+\section*{Encoding the Problem}
+	The system is comprised of components that are either original or replacements and the result is that the system operates or not; we use a Boolean functional mapping of input state and output state as follows:
+	Represent the system under consideration as a state vector of the format $C_1,C_2,\ldots,C_N$ with 0 (False) indicating an original component and 1 (True) representing a swapped component. For the output, let us choose 0 to encode a faulty (or inoperable) system, and 1 to encode a correctly functioning (operable) system. 
 
-An Example: The Single-Fault, 3-Component System
-To motivate the discussion, consider the single-fault, 3-component system. By construction, we know the state variable for the original system with no swapped components is 000, and we are given that the output is 0. Let's consider the case where the third component, C, is faulty. The truth table with the encoding above and the givens is:
+\section*{\texorpdfstring{An Example: The Single-Fault,\\ 3-Component System}}
 
-
-\begin{tikzpicture}
-    \node[anchor=south west,inner sep=0] at (0,0) {\includegraphics[width=\textwidth]{
-\[ \begin{array}{ccc|c}
-a&b&c & f \\           \hline
-1&1&1&\mathbf{0}\\ \hline
-1&1&0&\mathbf{1}\\ \hline
-1&0&1&\mathbf{0}\\ \hline
-1&0&0&\mathbf{0}\\ \hline
-0&1&1&\mathbf{0}\\ \hline
-0&1&0&\mathbf{0}\\ \hline
-0&0&1&\mathbf{0}\\ \hline
-0&0&0&\mathbf{0}
-\end{array} \]}
-};
-    \draw[red,ultra thick,rounded corners] (7.5,5.3) rectangle (9.4,6.2);
-\end{tikzpicture}
+	To motivate the discussion, consider the single-fault, 3-component system. By construction we know the state variable for the original system with no swapped components is $0,0,0$, and we are given that the output is 0. Let's consider the case where the third component, $C_3$, is faulty. The truth table with the encoding above and the givens is:
 
 
 \[ \begin{array}{ccc|c}
-a&b&c & f \\           \hline
-1&1&1&\mathbf{0}\\ \hline
-1&1&0&\mathbf{1}\\ \hline
-1&0&1&\mathbf{0}\\ \hline
-1&0&0&\mathbf{0}\\ \hline
-0&1&1&\mathbf{0}\\ \hline
+C_1&C_2&C_3 & Result \\           \hline
+0&0&0&\mathbf{0}\tikzmark{byconstruction} \\  \hline
+0&0&1&\mathbf{1}\\ \hline
 0&1&0&\mathbf{0}\\ \hline
-0&0&1&\mathbf{0}\\ \hline
-0&0&0&\mathbf{0}
+0&1&1&\mathbf{1}\\ \hline
+1&0&0&\mathbf{0}\\ \hline
+1&0&1&\mathbf{1}\\ \hline
+1&1&0&\mathbf{0}\\ \hline
+1&1&1&\mathbf{1}
 \end{array} \]
 
-Generalization to Arbirary Number of Components and Faults
+\begin{tikzpicture}[remember picture,overlay]
+\draw[<-]
+  ([shift={(4pt,2pt)}]pic cs:byconstruction) -- ++(1cm,0pt) node[anchor=west] {By construction};
+\end{tikzpicture}
 
-The Intuitive Interpretation
+Writing this in canonical Sum of Products (SOP) format, we have the equation:
 
-Conclusion
+\begin{displaymath}
+C_1'C_2'C_3 + C_1'C_{2}C_3 + C_{1}C_{2}'C_3 + C_1C_2C_3
+\end{displaymath}
 
+By factoring terms, we immediately see an interesting pattern emerge:
+
+\begin{displaymath}
+(C_1'C_2' + C_1'C_{2} + C_{1}C_{2}' + C_1C_2)C_3
+\end{displaymath}
+\begin{displaymath}
+(C_1'(C_2' + C_{2} ) + C_{1}(C_{2}' + C_2))C_3
+\end{displaymath}
+
+This can be reduced to the term of the component that caused the system to be inoperable ($C_3$) but more importantly, it leads to an intuitive understanding of the equations.
+
+\section*{The Intuitive Interpretation}
+Looking back at the Truth Table, we see that the equation reduces to exactly the component we need to replace; stated another way, common to all functioning units is the replacement of the malfunctioning component! We can go one step farther: a component that is already working can be replaced or not replaced; as both components are functioning, swapping them makes no difference. Components that are initially faulty, however, MUST be replaced for the system to operate, so they appear without their complemented form in the system equation, and will not reduce out. 
+
+
+\section*{\texorpdfstring{Generalization to Arbitrary Number \\of Components and Faults}}
+For a system to function, each component must be functional; in equation form, we have $C_1 \land C_2 \land \ldots C_{N-1} \land C_N$. Components that were already functional can be replaced or not: they show up in the final equation as $(C_M+C_M')$, which is why only the faulty items are left in the final equation. We see how this generalizes to an arbitrary number of components and faults!
+
+Assume we have a system composed of parts $C_0,C_1,C_2,\ldots,C_{N-1},C_N$. \\
+ Adding a component $C_{N+1}$ to the system leaves us with two possibilities: $C_{N+1}$ is not faulty, and therefore does not effect the system equation, or it is faulty, must be replaced, and ends up in the system equation. We see from this that we can add any number of components to the system and the final system equation will determine if they are faulty.
+
+As a side note, we mention that items that don't effect the functionality of the system (say, its color) will not show up in the system equation, unless specifically encoded for (a component painted incorrectly must be replaced). 
+
+\section*{Conclusion}
+We've taken a classic interview question and provided some discussion of how to encode and solve for the faulty component, and seen how this generalizes to an arbitrary number of functional components and multiple faults. I hope this overview was in some way useful or interesting; if it can be improved in any way, please email me and I'll update it. Thanks for reading!
 
 \end{document}
